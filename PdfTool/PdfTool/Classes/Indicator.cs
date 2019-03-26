@@ -9,7 +9,7 @@ namespace PdfTool.Classes
     {
         public string ServerName { get; set; }
         public string TagName { get; set; }
-        public double? Value { get; set; }
+        public string Value { get; set; }
         public bool Questionable { get; set; }
         public bool Substituted { get; set; }
         public string Annotated { get; set; }

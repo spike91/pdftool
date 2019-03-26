@@ -24,7 +24,7 @@ namespace PdfTool.Helpers
                     var indicator = new Indicator();
                     indicator.ServerName = values[0];
                     indicator.TagName = values[1];
-                    indicator.Value = Convert.ToDouble(values[2]);
+                    indicator.Value = values[2];
                     indicator.Date = DateTime.ParseExact(values[3], "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     indicator.Questionable = string.Equals(values[4], "true", StringComparison.OrdinalIgnoreCase);
                     indicator.Annotated = values[5];

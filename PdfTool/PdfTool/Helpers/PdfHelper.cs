@@ -11,25 +11,24 @@ namespace PdfTool.Helpers
 {
     public class PdfHelper
     {
-        public string ExportPdf(IEnumerable<Indicator> values, string filename)
+        public byte[] ExportPdf(IEnumerable<Indicator> values)
         {
-            var path = System.AppContext.BaseDirectory;
-            filename = $"{filename}_{DateTime.Now.Date.Day}-{DateTime.Now.Date.Month}-{DateTime.Now.Date.Year}_{DateTime.Now.TimeOfDay.Hours}-{DateTime.Now.TimeOfDay.Minutes}-{DateTime.Now.TimeOfDay.Seconds}-{DateTime.Now.TimeOfDay.Milliseconds}";
-            System.IO.FileStream fs = new FileStream($"{path}/App_Data/Temp/{filename}.pdf", FileMode.Create);
-            Document document = new Document(PageSize.A4, 25, 25, 30, 30);
-            PdfWriter writer = PdfWriter.GetInstance(document, fs);
-            
-            document.AddCreator("PdfTool app");
-            document.AddSubject("Export Data");
-            document.AddTitle("Indicators Report");
+            using (MemoryStream ms = new MemoryStream())
+            {
+                Document document = new Document(PageSize.A4, 25, 25, 30, 30);
+                PdfWriter writer = PdfWriter.GetInstance(document, ms);
 
-            document.Open();
-            
-            document.Close();
-            writer.Close();
-            fs.Close();
+                document.AddCreator("PdfTool app");
+                document.AddSubject("Export Data");
+                document.AddTitle("Indicators Report");
 
-            return path;
+                document.Open();
+                document.Add(new Paragraph("Hello World!"));
+                document.Close();
+                writer.Close();
+
+                return ms.GetBuffer();
+            }
         }
     }
 }

@@ -1,0 +1,49 @@
+﻿@model PdfTool.Models.IndicatorsViewModel
+
+<h2>@ViewBag.Title.</h2>
+
+@using (Html.BeginForm("TemperatureValue", "Home", FormMethod.Get))
+{
+
+    <fieldset>
+        Choose gas generator:
+        @Html.DropDownList("generatorName", new SelectList(Model.Generators, "Value", "Text", Model.SelectedGenerator), new { @class = "form-control", @id = "generator_select" })
+
+    </fieldset>
+}
+
+<table >
+    <thead>
+    <th>ServerName</th>
+    <th>TagName</th>
+    <th>Value</th>
+    <th>Date</th>
+    <th>Questionable</th>
+    <th>Substituted</th>
+    <th>Annotated</th>
+    </thead>
+    <tbody id="temperatureValues">
+
+    </tbody>
+
+</table>
+
+@section Scripts {
+<script type="text/javascript">
+
+        $("#generator_select").change(function () {
+            var url = '@Url.Action("TemperatureValue", "Home")';
+            $.ajax({
+                url: url,
+                type: "GET",
+                data: {
+                    generatorName: $(this).val()
+                }
+            }).done(function (response) {
+                $("#temperatureValues").html(response);
+            });
+        });
+
+</script>
+}
+
