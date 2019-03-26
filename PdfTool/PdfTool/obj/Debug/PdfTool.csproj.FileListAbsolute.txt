@@ -184,3 +184,5 @@ E:\pdftool\PdfTool\PdfTool\obj\Debug\PdfTool.csproj.CoreCompileInputs.cache
 E:\pdftool\PdfTool\PdfTool\obj\Debug\PdfTool.csproj.CopyComplete
 E:\pdftool\PdfTool\PdfTool\obj\Debug\PdfTool.dll
 E:\pdftool\PdfTool\PdfTool\obj\Debug\PdfTool.pdb
+E:\pdftool\PdfTool\PdfTool\bin\itextsharp.dll
+E:\pdftool\PdfTool\PdfTool\bin\itextsharp.xml
