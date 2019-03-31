@@ -31,13 +31,16 @@ namespace PdfTool.Controllers
         }
 
         [HttpGet]
-        public ActionResult TemperatureValue(string generatorName)
+        public ActionResult IndicatorValue(string generatorName)
         {
             var path = AppContext.BaseDirectory;
-            var gg = GG_VALUES.Find(g => g.Item1.Equals(generatorName, StringComparison.OrdinalIgnoreCase));
-            var values = csvHelper.ReadFile($"{path}App_Data\\{gg.Item2}");            
+            var gg = GG_VALUES.Find(g => g.Item1.Equals(generatorName ?? "", StringComparison.OrdinalIgnoreCase));
+            List<Indicator> values = new List<Indicator>();
+            if (gg != null) {
+                values = csvHelper.ReadFile($"{path}App_Data\\{gg.Item2}")?.ToList();
+            }
 
-            return PartialView("TemperatureValues", values); ;
+            return Json(values, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Indicators()

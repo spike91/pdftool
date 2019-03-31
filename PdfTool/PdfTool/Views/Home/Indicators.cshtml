@@ -1,38 +1,66 @@
 ﻿@model PdfTool.Models.IndicatorsViewModel
-
-<h2>@ViewBag.Title.</h2>
-
-@using (Html.BeginForm("TemperatureValue", "Home", FormMethod.Get))
-{
-
-    <fieldset>
-        Choose gas generator:
-        @Html.DropDownList("generatorName", new SelectList(Model.Generators, "Value", "Text", Model.SelectedGenerator), new { @class = "form-control", @id = "generator_select" })
-
-    </fieldset>
+@{
+    ViewBag.Title = "Indicators";
 }
 
-<table >
-    <thead>
-    <th>ServerName</th>
-    <th>TagName</th>
-    <th>Value</th>
-    <th>Date</th>
-    <th>Questionable</th>
-    <th>Substituted</th>
-    <th>Annotated</th>
-    </thead>
-    <tbody id="temperatureValues">
+<div class="row">
+    <div class="col-md-4">
+        @using (Html.BeginForm("TemperatureValue", "Home", FormMethod.Get))
+        {
+            <fieldset style="margin-bottom:50px;">
+                @Html.Label("Choose gas generator: ")
+                @Html.DropDownList("generatorName", new SelectList(Model.Generators, "Value", "Text", Model.SelectedGenerator), "Please select", new { @class = "form-control", @id = "generator_select" })
+            </fieldset>
+        }
+    </div>
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+        @using (Html.BeginForm())
+        {
+            <input type="button" class="btn pull-right" value="Report PDF" id="export" onclick="exportPdf()" />
+        }
+    </div>
+</div>
 
-    </tbody>
+<div class="row">
+    <div class="col-md-12">
+        <table id="indicators" class="table table-striped table-bordered table-sm" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>ServerName</th>
+                    <th>TagName</th>
+                    <th>Value</th>
+                    <th>Date</th>
+                    <th>Questionable</th>
+                    <th>Substituted</th>
+                    <th>Annotated</th>
+                </tr>
+            </thead>
+            <tbody id="temperatureValues"></tbody>
 
-</table>
+        </table>
+    </div>
+</div>
+
+
 
 @section Scripts {
-<script type="text/javascript">
-
+    <script type="text/javascript">
+    var datatable = $('#indicators').DataTable({
+        columns: [
+            { data: 'ServerName' },
+            { data: 'TagName' },
+            { data: 'Value' },
+            { data: 'Date' },
+            { data: 'Questionable' },
+            { data: 'Substituted' },
+            { data: 'Annotated' }
+        ],
+        pageLength: 25
+    });
         $("#generator_select").change(function () {
-            var url = '@Url.Action("TemperatureValue", "Home")';
+            var url = '@Url.Action("IndicatorValue", "Home")';
             $.ajax({
                 url: url,
                 type: "GET",
@@ -40,10 +68,15 @@
                     generatorName: $(this).val()
                 }
             }).done(function (response) {
-                $("#temperatureValues").html(response);
+                datatable.clear();
+                datatable.rows.add(response);
+                datatable.draw();
             });
-        });
+    });
 
-</script>
+    function exportPdf() {
+        location.href = '@Url.Action("DownloadFile", "Home")';
+    }
+    </script>
 }
 

@@ -13,6 +13,6 @@ namespace PdfTool.Classes
         public bool Questionable { get; set; }
         public bool Substituted { get; set; }
         public string Annotated { get; set; }
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
     }
 }
