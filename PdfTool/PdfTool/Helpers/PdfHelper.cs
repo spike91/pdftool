@@ -23,7 +23,9 @@ namespace PdfTool.Helpers
                 document.AddTitle("Report of generator temperatures");
 
                 document.Open();
-                Paragraph elem = new Paragraph("Report");
+                Font font = new Font();
+                font.Size = 16;
+                Paragraph elem = new Paragraph("Report", font);
                 elem.Alignment = Element.ALIGN_CENTER;
                 document.Add(elem);
                 elem = new Paragraph("of generator temperatures");
