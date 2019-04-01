@@ -10,8 +10,8 @@ namespace PdfTool.Helpers
 {
     public class CsvHelper
     {
-        public IEnumerable<Indicator> ReadFile(string filePath) {
-            List<Indicator> result = new List<Indicator>();
+        public IEnumerable<Temperature> ReadFile(string filePath) {
+            List<Temperature> result = new List<Temperature>();
             using (var reader = new StreamReader(filePath))
             {
                 if(!reader.EndOfStream)
@@ -21,7 +21,7 @@ namespace PdfTool.Helpers
                 {
                     var line = reader.ReadLine();
                     var values = line.Split(';');
-                    var indicator = new Indicator();
+                    var indicator = new Temperature();
                     indicator.ServerName = values[0];
                     indicator.TagName = values[1];
                     indicator.Value = values[2];

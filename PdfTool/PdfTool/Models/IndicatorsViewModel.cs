@@ -9,7 +9,7 @@ namespace PdfTool.Models
 {
     public class IndicatorsViewModel
     {
-        public IEnumerable<Indicator> TemperatureValues { get; set; }
+        public IEnumerable<Temperature> TemperatureValues { get; set; }
         public IEnumerable<SelectListItem> Generators { get; set; }
         public string SelectedGenerator { get; set; }
     }

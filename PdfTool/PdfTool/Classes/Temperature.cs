@@ -5,7 +5,7 @@ using System.Web;
 
 namespace PdfTool.Classes
 {
-    public class Indicator
+    public class Temperature
     {
         public string ServerName { get; set; }
         public string TagName { get; set; }

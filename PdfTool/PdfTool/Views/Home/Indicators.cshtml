@@ -19,7 +19,7 @@
         @using (Html.BeginForm("DownloadFile", "Home", FormMethod.Post))
         {
             <input type="hidden" id="selected" name="generatorName" />
-            <button id="export" type="submit" class="btn pull-right"> Report PDF </button>
+            <button id="export" type="submit" class="btn pull-right" disabled="disabled" > Report PDF </button>
         }
     </div>
 </div>
@@ -62,6 +62,10 @@
     });
     $("#generator_select").change(function () {
         var gname = $(this).val();
+        var isDefVal = gname == "";
+        console.log(isDefVal);
+        console.log(gname);
+        $("#export").attr("disabled", isDefVal);
         $("#selected").val(gname);
             var url = '@Url.Action("IndicatorValue", "Home")';
             $.ajax({

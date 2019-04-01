@@ -3,6 +3,7 @@ using PdfTool.Helpers;
 using PdfTool.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -35,7 +36,7 @@ namespace PdfTool.Controllers
         {
             var path = AppContext.BaseDirectory;
             var gg = GG_VALUES.Find(g => g.Item1.Equals(generatorName ?? "", StringComparison.OrdinalIgnoreCase));
-            List<Indicator> values = new List<Indicator>();
+            List<Temperature> values = new List<Temperature>();
             if (gg != null) {
                 values = csvHelper.ReadFile($"{path}App_Data\\{gg.Item2}")?.ToList();
             }
@@ -49,7 +50,7 @@ namespace PdfTool.Controllers
             List<SelectListItem> items = new List<SelectListItem>();
             GGs.ForEach(g => items.Add(new SelectListItem { Text = g, Value = g }));
             model.Generators = items;
-            model.TemperatureValues = new List<Indicator>();
+            model.TemperatureValues = new List<Temperature>();
 
             return View(model);
         }
@@ -59,21 +60,50 @@ namespace PdfTool.Controllers
         {
             var date = DateTime.Now.Date;
             var time = DateTime.Now.TimeOfDay;
-            string filename = "Export_Data";
+            string filename = $"Export_Data_{generatorName}";
             filename = $"{filename}_{date.Day}-{date.Month}-{date.Year}";
             filename = $"{filename}_{time.Hours}-{time.Minutes}-{time.Seconds}-{time.Milliseconds}";
             filename = $"{filename}.pdf";
 
             var path = AppContext.BaseDirectory;
             var gg = GG_VALUES.Find(g => g.Item1.Equals(generatorName ?? "", StringComparison.OrdinalIgnoreCase));
-            List<Indicator> values = new List<Indicator>();
+            List<Temperature> data = new List<Temperature>();
             if (gg != null)
             {
-                values = csvHelper.ReadFile($"{path}App_Data\\{gg.Item2}")?.ToList();
+                data = csvHelper.ReadFile($"{path}App_Data\\{gg.Item2}")?.ToList();
             }
 
             var helper = new PdfHelper();
-            byte[] filedata = helper.ExportPdf(values);
+            var dates = data.Select(v => v.Date).ToList();
+            List<DateTime> datesVal = new List<DateTime>();
+            dates?.ForEach(d => datesVal.Add(DateTime.ParseExact(d, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture)));
+            var startDate = datesVal?.OrderBy(v => v).First();
+            var startDateStr = startDate?.ToShortDateString() ?? "NA";
+            var endDate = datesVal?.OrderByDescending(v => v).First();
+            var endDateStr = endDate?.ToShortDateString() ?? "NA";
+
+            List<double> values = data?.Select(v => {
+                double val = 0;
+                double.TryParse(v.Value, out val);
+                return val;
+            })?.ToList() ?? new List<double>();
+
+            var minVal = (values?.OrderBy(v => v)?.First())?.ToString() ?? "NA";
+            var maxVal = (values?.OrderBy(v => v)?.Last())?.ToString() ?? "NA";
+            var avgVal = 0f;
+            var idx = 0;
+            data?.ForEach(item => {
+                float.TryParse(item.Value, out float val);
+                avgVal += val;
+                idx++;
+            });
+            if (idx > 0)
+            {
+                avgVal /= idx;
+            }
+            var mostFreqVal = data?.GroupBy(v => v)?.Select(x => new { num = x, cnt = x.Count() })?.OrderByDescending(grp => grp.cnt)?.Select(g => g.num)?.First()?.Key?.Value?.ToString() ?? "NA";
+
+            byte[] filedata = helper.ExportPdf(generatorName, data.Count, $"{startDateStr} - {endDateStr}", maxVal.ToString(), minVal.ToString(), avgVal.ToString(), mostFreqVal.ToString());
 
             var cd = new System.Net.Mime.ContentDisposition
             {
