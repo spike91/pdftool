@@ -54,7 +54,8 @@ namespace PdfTool.Controllers
             return View(model);
         }
 
-        public ActionResult DownloadFile(IEnumerable<Indicator> data)
+        [HttpPost]
+        public ActionResult DownloadFile(string generatorName)
         {
             var date = DateTime.Now.Date;
             var time = DateTime.Now.TimeOfDay;
@@ -63,8 +64,16 @@ namespace PdfTool.Controllers
             filename = $"{filename}_{time.Hours}-{time.Minutes}-{time.Seconds}-{time.Milliseconds}";
             filename = $"{filename}.pdf";
 
+            var path = AppContext.BaseDirectory;
+            var gg = GG_VALUES.Find(g => g.Item1.Equals(generatorName ?? "", StringComparison.OrdinalIgnoreCase));
+            List<Indicator> values = new List<Indicator>();
+            if (gg != null)
+            {
+                values = csvHelper.ReadFile($"{path}App_Data\\{gg.Item2}")?.ToList();
+            }
+
             var helper = new PdfHelper();
-            byte[] filedata = helper.ExportPdf(data);
+            byte[] filedata = helper.ExportPdf(values);
 
             var cd = new System.Net.Mime.ContentDisposition
             {

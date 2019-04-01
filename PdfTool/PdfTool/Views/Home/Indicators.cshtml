@@ -3,7 +3,7 @@
     ViewBag.Title = "Indicators";
 }
 
-<div class="row">
+<div class="row" style="margin-top:50px">
     <div class="col-md-4">
         @using (Html.BeginForm("TemperatureValue", "Home", FormMethod.Get))
         {
@@ -16,9 +16,10 @@
     <div class="col-md-4">
     </div>
     <div class="col-md-4">
-        @using (Html.BeginForm())
+        @using (Html.BeginForm("DownloadFile", "Home", FormMethod.Post))
         {
-            <input type="button" class="btn pull-right" value="Report PDF" id="export" onclick="exportPdf()" />
+            <input type="hidden" id="selected" name="generatorName" />
+            <button id="export" type="submit" class="btn pull-right"> Report PDF </button>
         }
     </div>
 </div>
@@ -46,7 +47,7 @@
 
 
 @section Scripts {
-    <script type="text/javascript">
+<script type="text/javascript">
     var datatable = $('#indicators').DataTable({
         columns: [
             { data: 'ServerName' },
@@ -59,13 +60,15 @@
         ],
         pageLength: 25
     });
-        $("#generator_select").change(function () {
+    $("#generator_select").change(function () {
+        var gname = $(this).val();
+        $("#selected").val(gname);
             var url = '@Url.Action("IndicatorValue", "Home")';
             $.ajax({
                 url: url,
                 type: "GET",
                 data: {
-                    generatorName: $(this).val()
+                    generatorName: gname
                 }
             }).done(function (response) {
                 datatable.clear();
@@ -73,10 +76,6 @@
                 datatable.draw();
             });
     });
-
-    function exportPdf() {
-        location.href = '@Url.Action("DownloadFile", "Home")';
-    }
-    </script>
+</script>
 }
 
